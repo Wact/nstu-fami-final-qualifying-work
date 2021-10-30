@@ -1,15 +1,12 @@
-import os
-
-import pandas as pd
 from plotly import express as px
+
+from utils import read_samples
 
 
 def draw_chart_for_sample():
-    data_dir = 'data'
     data_filename = 'v0=4, vq=4.77e-05, mlr=0.0019, th=2200, size=2.pkl'
-    path = os.path.join(data_dir, data_filename)
 
-    samples = pd.read_pickle(path)
+    samples = read_samples(data_filename)
     number = 0
 
     fig = px.line(
