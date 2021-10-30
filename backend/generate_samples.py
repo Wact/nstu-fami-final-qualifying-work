@@ -10,7 +10,6 @@ def generate():
     generator = Generator(v0, vq, mlr, th)
     generator.create_samples(2)
 
-    # generator.draw_chart_for_sample(0)
     generator.save_samples()
 
 

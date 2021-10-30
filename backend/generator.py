@@ -2,7 +2,6 @@ import os.path
 
 import numpy as np
 import pandas as pd
-from plotly import express as px
 
 
 class Generator:
@@ -47,13 +46,6 @@ class Generator:
 
     def create_samples(self, amount: int):
         self.samples = [self._create_sample() for _ in range(amount)]
-
-    def draw_chart_for_sample(self, number: int):
-        fig = px.line(
-            self.samples[number], x='time', y='wdc', title='WDC',
-            labels={'time': 'Time (hours)', 'wdc': 'WDC (ppm)'},
-        )
-        fig.show()
 
     def save_samples(self):
         data_dir = 'data'
