@@ -1,113 +1,67 @@
+import os.path
+
 import numpy as np
+import pandas as pd
 from plotly import express as px
 
 
 class Generator:
-    @classmethod
-    def calc_k(cls, beta, q, psi, v0) -> float:
-        """
-        Calculation of attenuation coefficient
-        :param beta: beta ratio for oil filtration
-        :param q: nominal oil flow through the filter (L/min)
-        :param psi: debris loss factor due to other factors
-                    (sedimentation, comminution, etc.)
-        :param v0: initial volume of lube oil in the tank
-        :return: attenuation coefficient
-        """
-        return (q / beta + psi) / v0
+    _MINUTES_IN_HOUR = 60
+    _REPLENISHMENT_HOURS = 700
 
-    @classmethod
-    def calc_r(cls, k, t) -> float:
-        """
-        Calculation of attenuation function for wear
-        debris removal in the lubrication system
-        :param k: attenuation coefficient
-        :param t: time
-        :return: attenuation function for wear
-                 debris removal in the lubrication system
-        """
-        return np.exp(-k * t)
-
-    @classmethod
-    def calc_m(cls, ml, t) -> float:
-        """
-        Calculation of wear rate
-        :param ml: mass loss (mg)
-        :param t: time (min)
-        :return: wear rate
-        """
-        return ml / t
-
-    @classmethod
-    def calc_c(cls, m, r, v0, vr, vq, t) -> float:
-        """
-        Calculation of wear debris concentration (ppm)
-        :param m: wear rate (mg/min)
-        :param r: attenuation function for wear
-                  debris removal in the lubrication system
-        :param v0: initial volume of lube oil in the tank
-        :param vr: fresh oil replenishment rate
-        :param vq: the oil loss rate
-        :param t: time
-        :return: wear debris concentration (ppm)
-        """
-        return m * r / (v0 + vr - vq * t)
-
-    def create_sample(self):
+    def __init__(self, v0: float, vq: float, mlr: float, th: int) -> None:
         np.random.seed(42)
-        beta = 200
-        v0 = 4  # L
-        vr = 0  # L
-        vq = 4.77 * 1e-5  # L / min
-        q = 4  # L / min
-        psi = 0.001
+        self._V0 = v0  # L
+        self._VQ = vq  # L / min
+        self._MASS_LOSS_RATE = mlr  # mg / min
+        self._TOTAL_HOURS = th  # h
+
+        self.samples = []
+
+    def _create_sample(self):
         ml = 0  # mg
+        vr = 0  # L
 
-        x = 2200
-        minutes = 60
-        rep_hours = 700
-
-        times = range(1, x * minutes)
+        times = range(1, self._TOTAL_HOURS * self._MINUTES_IN_HOUR)
         time_series = {
             'time': [],
             'wdc': [],
         }
 
-        k = self.calc_k(beta, q, psi, v0)
-
         for t in times:
-            if t % minutes == 0:
-                # r = self.calc_r(k, t)
-                # m = self.calc_m(ml, t)
-                # c = self.calc_c(m, r, v0, vr, vq, t) + c_ar
-                #
-                # time_series['time'].append(t / 60)
-                # time_series['wdc'].append(c)
+            if t % (self._REPLENISHMENT_HOURS * self._MINUTES_IN_HOUR) == 0:
+                vr = self._VQ * t
 
-                if t % (rep_hours * minutes) == 0:
+            if t % (5 * self._MINUTES_IN_HOUR) == 0:
 
-                    # v0 += ml / 1000000
-                    # v0_rem = v0 - vq * t  # v0 remaining before replenishment
-                    # k = self.calc_k(beta, q, psi, v0)
-                    # r = self.calc_r(k, t)
-                    # m = self.calc_m(ml, t)
-                    # c_ar = self.calc_c(m, r, v0, vr, vq, t)
-                    vr = vq * t
-                    # ml = 0
-                    print(t)
-
-            if t % (5 * minutes) == 0:
-
-                c = ml / (v0 + vr - vq * t)
+                c = ml / (self._V0 + vr - self._VQ * t)
 
                 c += np.random.normal(0, 0.5)
 
-                time_series['time'].append(t / minutes)
+                time_series['time'].append(t / self._MINUTES_IN_HOUR)
                 time_series['wdc'].append(c)
 
-            ml = 19 * 1e-4 * t
+            ml = self._MASS_LOSS_RATE * t
 
-        print(time_series['wdc'])
+        return time_series
 
-        fig = px.line(time_series, x='time', y='wdc', title='WDC', labels={'time': 'Time (hours)', 'wdc': 'WDC (ppm)'})
+    def create_samples(self, amount: int):
+        self.samples = [self._create_sample() for _ in range(amount)]
+
+    def draw_chart_for_sample(self, number: int):
+        fig = px.line(
+            self.samples[number], x='time', y='wdc', title='WDC',
+            labels={'time': 'Time (hours)', 'wdc': 'WDC (ppm)'},
+        )
         fig.show()
+
+    def save_samples(self):
+        data_dir = 'data'
+        if not os.path.isdir(data_dir):
+            os.mkdir(data_dir)
+
+        data_filename = (f'v0={self._V0}, vq={self._VQ}, mlr={self._MASS_LOSS_RATE}, '
+                         f'th={self._TOTAL_HOURS}, size={len(self.samples)}.pkl')
+
+        path = os.path.join(data_dir, data_filename)
+        pd.Series(self.samples).to_pickle(path)
