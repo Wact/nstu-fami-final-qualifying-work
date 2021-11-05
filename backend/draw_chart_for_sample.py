@@ -3,10 +3,10 @@ from plotly import express as px
 from utils import read_samples
 
 
-def draw_chart_for_sample():
+def draw_chart_for_sample() -> None:
     data_filename = 'v0=4, vq=4.77e-05, mlr=0.0019, th=2200, size=2.pkl'
 
-    samples = read_samples(data_filename)
+    samples, _ = read_samples(data_filename, False)
     number = 0
 
     fig = px.line(

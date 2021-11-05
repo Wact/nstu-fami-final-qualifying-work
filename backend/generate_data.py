@@ -1,7 +1,7 @@
 from generator import Generator
 
 
-def generate():
+def generate() -> None:
     v0 = 4  # L
     vq = 4.77 * 1e-5  # L / min
     mlr = 19 * 1e-4  # mg / min

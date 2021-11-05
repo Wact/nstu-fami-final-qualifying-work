@@ -3,6 +3,8 @@ import os.path
 import numpy as np
 import pandas as pd
 
+from constants import Constants
+
 
 class Generator:
     _MINUTES_IN_HOUR = 60
@@ -17,7 +19,7 @@ class Generator:
 
         self.samples = []
 
-    def _create_sample(self):
+    def _create_sample(self) -> dict:
         ml = 0  # mg
         vr = 0  # L
 
@@ -44,16 +46,15 @@ class Generator:
 
         return time_series
 
-    def create_samples(self, amount: int):
+    def create_samples(self, amount: int) -> None:
         self.samples = [self._create_sample() for _ in range(amount)]
 
-    def save_samples(self):
-        data_dir = 'data'
-        if not os.path.isdir(data_dir):
-            os.mkdir(data_dir)
+    def save_samples(self) -> None:
+        if not os.path.isdir(Constants.DATA_DIR):
+            os.mkdir(Constants.DATA_DIR)
 
         data_filename = (f'v0={self._V0}, vq={self._VQ}, mlr={self._MASS_LOSS_RATE}, '
                          f'th={self._TOTAL_HOURS}, size={len(self.samples)}.pkl')
 
-        path = os.path.join(data_dir, data_filename)
+        path = os.path.join(Constants.DATA_DIR, data_filename)
         pd.Series(self.samples).to_pickle(path)
