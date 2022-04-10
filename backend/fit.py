@@ -1,3 +1,4 @@
+import argparse
 import logging
 import os
 
@@ -11,25 +12,30 @@ logger = logging.getLogger(__name__)
 
 
 def fit() -> None:
-    # путь до файла с подготовленными данными для обучения
-    data_filename = 'v0=4, vq=4.77e-05, mlr=0.0019, th=2200, samples=362275.pkl'
+    parser = argparse.ArgumentParser(description='Fit machine learning model.')
+
+    # чтение параметра 'имя файла с подготовленными данными'
+    parser.add_argument('-f', '--filename', required=True, dest='data_filename',
+                        help='filename of pickle file with samples in \'data\\prepared_data\' folder')
+
+    data_filename = parser.parse_args().data_filename
 
     # загрузка подготовленных данных
     df, size = read_samples(data_filename, is_prepared=True)
 
     # разделение данных на признаки и отклик
-    train_pool = Pool(df.drop('target', axis=1), df['target'])
+    train_pool = Pool(df[['wdc_23', 'num_refill']], df['target'])
 
     # параметры обучаемой модели
     params = {
-        'iterations': 100,
+        'iterations': 500,
         'depth': 6,
         'loss_function': 'RMSE',
         'verbose': False,
     }
 
     # результаты кросс-валидации
-    scores = cv(train_pool, params)
+    scores = cv(train_pool, params, type='TimeSeries')
 
     # создание папки для сохранения результатов кросс-валидации
     if not os.path.isdir(Constants.SCORES_DIR):
@@ -51,7 +57,7 @@ def fit() -> None:
     # обучение модели
     model.fit(train_pool)
 
-    #
+    # сохранение модели
     Constants.MODELS_DIR = 'models'
     if not os.path.isdir(Constants.MODELS_DIR):
         os.mkdir(Constants.MODELS_DIR)
@@ -61,6 +67,8 @@ def fit() -> None:
     model_path = os.path.join(Constants.MODELS_DIR, model_filename)
 
     model.save_model(model_path)
+
+    logger.info(f'Model filename is "{model_filename}".')
 
 
 if __name__ == '__main__':

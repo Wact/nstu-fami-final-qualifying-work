@@ -33,7 +33,7 @@ class Generator:
             if t % (self._REPLENISHMENT_HOURS * self._MINUTES_IN_HOUR) == 0:
                 vr = self._VQ * t
 
-            if t % (5 * self._MINUTES_IN_HOUR) == 0:
+            if t % (Constants.TIME_STEP * self._MINUTES_IN_HOUR) == 0:
 
                 c = ml / (self._V0 + vr - self._VQ * t)
 
