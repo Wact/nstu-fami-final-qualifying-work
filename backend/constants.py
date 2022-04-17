@@ -7,4 +7,5 @@ class Constants:
     MODELS_DIR = 'models'
     SCORES_DIR = 'scores'
     DISTRIBUTION_PARAMS_PATH = 'distribution_params.json'
-    ALGORITHMS = ['catboost', 'linear']
+    ALGORITHMS = ['catboost', 'linear', 'svm']
+    SVM_KERNELS = ['linear', 'poly']

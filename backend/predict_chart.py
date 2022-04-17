@@ -52,7 +52,7 @@ def predict_chart() -> None:
         # загрузка модели
         model.load_model(model_path)
 
-    elif algorithm == 'linear':
+    elif algorithm in ['linear', 'svm']:
         # загрузка модели
         model = pickle.load(open(model_path, 'rb'))
 
