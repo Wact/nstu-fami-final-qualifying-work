@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6cc61d23acdee745454d43d5355769730e3d2e13c8192beb571b1d49e1a8d3c9"
+            "sha256": "be07c4d6a0f2aade57d31c74546b4ffe5844fc0d58a4eba029735c67de0dafe9"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -55,11 +55,11 @@
         },
         "graphviz": {
             "hashes": [
-                "sha256:7c90cebc147c18bcdffcd3c76db58cbface5d45fe0247a2f3bfb144d32a8c77c",
-                "sha256:c0a6ac9fadaa308c4ab0d526749c6e127425ec5a76644bbb03e2e04b19a9da9f"
+                "sha256:62c5f48bcc534a45b4588c548ff75e419c1f1f3a33d31a91796ae80a7f581e4a",
+                "sha256:76bdfb73f42e72564ffe9c7299482f9d72f8e6cb8d54bce7b48ab323755e9ba5"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==0.19.2"
+            "version": "==0.20"
         },
         "joblib": {
             "hashes": [
@@ -285,7 +285,7 @@
                 "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86",
                 "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==2.8.2"
         },
         "pytz": {
@@ -375,8 +375,15 @@
                 "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926",
                 "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==1.16.0"
+        },
+        "sklearn": {
+            "hashes": [
+                "sha256:e23001573aa194b834122d2b9562459bf5ae494a2d59ca6b8aa22c85a44c0e31"
+            ],
+            "index": "pypi",
+            "version": "==0.0"
         },
         "tenacity": {
             "hashes": [

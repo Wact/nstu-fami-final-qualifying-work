@@ -1,12 +1,13 @@
 import argparse
 import logging
 import os.path
+import pickle
 
 from catboost import CatBoostRegressor
 from plotly import graph_objects as go
 
 from constants import Constants
-from utils import read_samples
+from utils import read_samples, valid_algorithm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -23,9 +24,14 @@ def predict_chart() -> None:
     parser.add_argument('-fm', '--filename-model', required=True, dest='model_filename',
                         help='catboost model filename in \'models\' folder')
 
+    # чтение параметра 'алгоритм машинного обучения'
+    parser.add_argument('-a', '--algorithm', required=True, dest='algorithm', type=valid_algorithm,
+                        help='filename of pickle file with samples in \'data\\prepared_data\' folder')
+
     args = parser.parse_args()
     data_filename = args.data_filename
     model_filename = args.model_filename
+    algorithm = args.algorithm
 
     # путь до файла с моделью
     model_path = os.path.join(Constants.MODELS_DIR, model_filename)
@@ -34,14 +40,21 @@ def predict_chart() -> None:
     df, size = read_samples(data_filename, is_prepared=True)
 
     # разделение данных на признаки и отклик
-    features = df[['wdc_23', 'num_refill']]
+    features = df[['wdc_23']]
     wdc_series = df[['time', 'wdc_24']]
 
-    # инициализация модели
-    model = CatBoostRegressor()
+    model = None
 
-    # загрузка модели
-    model.load_model(model_path)
+    if algorithm == 'catboost':
+        # инициализация модели
+        model = CatBoostRegressor()
+
+        # загрузка модели
+        model.load_model(model_path)
+
+    elif algorithm == 'linear':
+        # загрузка модели
+        model = pickle.load(open(model_path, 'rb'))
 
     # прогноз
     predictions = model.predict(features)
