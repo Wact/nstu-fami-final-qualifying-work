@@ -18,15 +18,15 @@ def positive_int(value: str) -> int:
 def valid_algorithm(algorithm: str) -> str:
     if algorithm in Constants.ALGORITHMS:
         return algorithm
-    else:
-        raise argparse.ArgumentTypeError(f'{algorithm} is an invalid algorithm value')
+
+    raise argparse.ArgumentTypeError(f'{algorithm} is an invalid algorithm value')
 
 
 def valid_svm_kernel(svm_kernel: str) -> str:
     if svm_kernel in Constants.SVM_KERNELS:
         return svm_kernel
-    else:
-        raise argparse.ArgumentTypeError(f'{svm_kernel} is an invalid algorithm value')
+
+    raise argparse.ArgumentTypeError(f'{svm_kernel} is an invalid algorithm value')
 
 
 def read_samples(data_filename: str, is_prepared: bool) -> [Union[pd.Series, pd.DataFrame], int]:
