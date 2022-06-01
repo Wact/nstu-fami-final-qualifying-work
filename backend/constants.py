@@ -1,7 +1,6 @@
 class Constants:
-    WINDOW_SIZE = 25
+    WINDOW_SIZE = 2
     THRESHOLD = 90
-    TIME_STEP = 5
     DATA_DIR = 'data'
     PREPARED_DATA_DIR = 'prepared_data'
     MODELS_DIR = 'models'

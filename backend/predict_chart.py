@@ -40,8 +40,8 @@ def predict_chart() -> None:
     df, size = read_samples(data_filename, is_prepared=True)
 
     # разделение данных на признаки и отклик
-    features = df[['wdc_23']]
-    wdc_series = df[['time', 'wdc_24']]
+    features = df[['wdc_1']]
+    wdc_series = df[['time', 'wdc_2']]
 
     model = None
 
@@ -60,25 +60,24 @@ def predict_chart() -> None:
     predictions = model.predict(features)
 
     # вычисление WDC
-    wdc_24_hat_dict = {
-        'wdc_24_hat': (Constants.THRESHOLD * (wdc_series['time']) /
-                       (wdc_series['time'] + predictions)),
+    wdc_2_hat_dict = {
+        'wdc_2_hat': (Constants.THRESHOLD * (wdc_series['time']) / (wdc_series['time'] + predictions)),
     }
-    wdc_series = wdc_series.assign(**wdc_24_hat_dict)
+    wdc_series = wdc_series.assign(**wdc_2_hat_dict)
 
     # построение графика
     fig = go.Figure()
 
-    fig.add_trace(go.Scatter(x=wdc_series['time'], y=wdc_series['wdc_24'], mode='lines', name='C(t)'))
+    fig.add_trace(go.Scatter(x=wdc_series['time'], y=wdc_series['wdc_2'], mode='lines', name='C(t)'))
 
-    fig.add_trace(go.Scatter(x=wdc_series['time'], y=wdc_series['wdc_24_hat'], mode='lines', name='C^(t)'))
+    fig.add_trace(go.Scatter(x=wdc_series['time'], y=wdc_series['wdc_2_hat'], mode='lines', name='C^(t)'))
 
     fig.update_layout(
         width=800,
         height=800,
         title='Концентрация частиц износа',
-        xaxis_title='t',
-        yaxis_title='C(t)',
+        xaxis_title='t, h',
+        yaxis_title='C(t), ppm',
     )
 
     fig.show()

@@ -1,9 +1,8 @@
 import argparse
-import re
 
 from plotly import express as px
 
-from utils import read_samples, positive_int
+from utils import read_samples, positive_int, get_data_filename_attribute
 
 
 def draw_time_series_chart() -> None:
@@ -21,7 +20,8 @@ def draw_time_series_chart() -> None:
     data_filename = args.data_filename
     number = args.sample_number
 
-    size = int(re.search('size=(.*?)\\.', data_filename).group(1))
+    size = int(get_data_filename_attribute(data_filename, 'size'))
+
     if number > size:
         raise ValueError(f'The sample number ({number}) must be lower or equal '
                          f'than amount of samples ({size}) in the file.')
@@ -31,7 +31,7 @@ def draw_time_series_chart() -> None:
 
     fig = px.line(
         samples[number], x='time', y='wdc', title='Концентрация частиц износа',
-        labels={'time': 't', 'wdc': 'C(t)'}, width=800, height=800,
+        labels={'time': 't, h', 'wdc': 'C(t), ppm'}, width=800, height=800,
     )
     fig.show()
 

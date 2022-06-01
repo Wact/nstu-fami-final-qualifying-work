@@ -5,7 +5,7 @@ import os
 import pandas as pd
 
 from constants import Constants
-from utils import read_samples
+from utils import read_samples, log_time_series
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -23,14 +23,14 @@ def prepare_data():
     # чтение семплов
     samples, size = read_samples(data_filename, is_prepared=False)
 
-    columns = [f'wdc_{x}' for x in range(Constants.WINDOW_SIZE)] + ['time'] + ['target']
+    columns = [f'wdc_{x + 1}' for x in range(Constants.WINDOW_SIZE)] + ['time'] + ['target']
 
     d = {}
     global_index = 0
 
     # подготовка данных
     for i in range(size):
-        logger.info(f'Time series #{i + 1}/{size}')
+        log_time_series(i, size)
 
         sample: dict = samples[i]
         wdc = pd.Series(sample['wdc'])
